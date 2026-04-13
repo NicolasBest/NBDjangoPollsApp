@@ -44,7 +44,7 @@ pipeline {
                 nohup bash -c "
                 cd \$WORKSPACE &&
                 . venv/bin/activate &&
-                python manage.py runserver 0.0.0.0:8000
+                python manage.py runserver 0.0.0.0:8000 --noreload
                 " > django.log 2>&1 &
 
                 sleep 5
