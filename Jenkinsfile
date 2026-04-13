@@ -31,26 +31,21 @@ pipeline {
         stage('Start Django server') {
             steps {
                 sh '''
-                echo "Current directory:"
-                pwd
-                ls -la
+                echo "Starting Django using setsid..."
 
                 pkill -f "manage.py runserver" || true
 
-                export BUILD_ID=dontKillMe
+                cd $WORKSPACE
 
-                echo "Starting Django..."
-
-                nohup bash -c "
-                cd \$WORKSPACE &&
+                setsid bash -c "
                 . venv/bin/activate &&
                 python manage.py runserver 0.0.0.0:8000 --noreload
-                " > django.log 2>&1 &
+                " > django.log 2>&1 < /dev/null &
 
                 sleep 5
 
-                echo "Checking log..."
-                cat django.log || echo "No log created"
+                echo "Log output:"
+                cat django.log || echo "No log found"
                 '''
             }
         }
