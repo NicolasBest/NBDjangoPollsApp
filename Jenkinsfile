@@ -31,10 +31,26 @@ pipeline {
         stage('Start Django server') {
             steps {
                 sh '''
+                echo "Current directory:"
+                pwd
+                ls -la
+
                 pkill -f "manage.py runserver" || true
+
                 export BUILD_ID=dontKillMe
-                nohup bash -c ". venv/bin/activate && python manage.py runserver 0.0.0.0:8000" > django.log 2>&1 &
+
+                echo "Starting Django..."
+
+                nohup bash -c "
+                cd \$WORKSPACE &&
+                . venv/bin/activate &&
+                python manage.py runserver 0.0.0.0:8000
+                " > django.log 2>&1 &
+
                 sleep 5
+
+                echo "Checking log..."
+                cat django.log || echo "No log created"
                 '''
             }
         }
