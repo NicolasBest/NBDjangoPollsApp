@@ -32,7 +32,9 @@ pipeline {
             steps {
                 sh '''
                 pkill -f "manage.py runserver" || true
+                export BUILD_ID=dontKillMe
                 nohup bash -c ". venv/bin/activate && python manage.py runserver 0.0.0.0:8000" > django.log 2>&1 &
+                sleep 5
                 '''
             }
         }
